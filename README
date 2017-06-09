@@ -1,0 +1,72 @@
+This README file contains information on the contents of the
+meta-streamline layer.
+
+Please see the corresponding sections below for details.
+
+
+Dependencies
+============
+
+This layer depends on:
+
+  URI: git://git.openembedded.org/bitbake
+  branch: master
+
+  URI: git://git.openembedded.org/openembedded-core
+  layers: meta
+  branch: krogoth
+
+  URI: git://git.yoctoproject.org/poky
+  branch: krogoth
+  
+
+
+Patches
+=======
+
+Please submit any patches against the meta-streamline layer to 
+
+Maintainer: W. Dobbe <xxx.yyyyyy@zzzzz.com>
+
+
+Table of Contents
+=================
+
+  I. Adding the meta-streamline layer to your build
+ II. Misc
+
+
+I. Adding the meta-wt layer to your build
+=================================================
+
+In order to use this layer, you need to make the build system aware of
+it.
+
+Assuming the meta-wt layer exists at the top-level of your
+yocto build tree, you can add it to the build system by adding the
+location of the meta-wt layer to bblayers.conf, along with any
+other layers needed. e.g.:
+
+  BBLAYERS ?= " \
+    /path/to/yocto/meta \
+    /path/to/yocto/meta-poky \
+    /path/to/yocto/meta-yocto-bsp \
+    /path/to/yocto/meta-streamline \
+    "
+
+
+II. Misc
+========
+This layer contains recipes for the ARM DS-5 streamline gator kernel module and daemon.
+The included source is from DS-5 5.27.
+
+The makefile for the (optional) gator kernel module had to be changed to let it build with Yocto.
+To remove complexity in the makefile I have moved the generation of the include file gator_src_md5.h
+(that contains a md5sum of all concatenated source files) to the bitbake recipe.
+
+The performance counters of the NXP i.MX6 SOC are turned off by default. I included a kernel module
+that will turn on these counters when the module is loaded, and will turn the counters off when
+the module is unloaded. This module should only be used with NXP i.MX6 SOCs.
+
+Tested with Yocto krogoth branch and Congatec QMX6 (NXP i.MX6 SOM).
+
