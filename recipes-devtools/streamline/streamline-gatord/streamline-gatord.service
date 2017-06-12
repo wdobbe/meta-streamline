@@ -2,9 +2,8 @@
 Description=Arm DS-5 Streamline gator daemon, collects profiling data on target and sends it to Streamline profiler on host
 
 [Service]
-User=gator
-ExecStartPre=/sbin/modprobe imx6-pmu-count gator
-ExecStart=/usr/bin/gatord
+ExecStartPre=/sbin/modprobe imx6-pmu-count ; /sbin/modprobe gator
+ExecStart=/usr/sbin/gatord -a
 ExecStopPost=/sbin/rmmod gator imx6-pmu-count
 
 [Install]

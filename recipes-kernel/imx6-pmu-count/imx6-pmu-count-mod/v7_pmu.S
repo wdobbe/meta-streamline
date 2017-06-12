@@ -256,7 +256,9 @@ reset_ccnt:
   MCR     p15, 0, r0, c9, c12, 0  /* Write PMNC */
   BX      lr
 
- 
+.section        ".modinfo" , "aw"
+__mod_license:
+.string "license=GPL" 
     .end @end of code, this line is optional.
 /* ------------------------------------------------------------ */
 /* End of v7_pmu.s      */

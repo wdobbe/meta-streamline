@@ -24,7 +24,8 @@ do_compile() {
 
 
 do_install () {
-    install -D -m 0755 ${S}/gatord ${D}${sbindir}
+    install -d -D -m 0755 ${D}${sbindir}
+    install -m 0755 ${S}/gatord ${D}${sbindir}
     install -d ${D}${systemd_unitdir}/system
     install -m 0644 ${WORKDIR}/${PN}.service ${D}${systemd_unitdir}/system
 }
@@ -34,9 +35,7 @@ FILES_${PN} += "${sbindir} \
                 ${systemd_unitdir}/system/${PN}.service \
 "
 
-USERADD_PACKAGES = "${PN}"
-USERADD_PARAM_${PN} = "--system --no-create-home --shell /bin/false --no-user-group --home-dir /var/run/user/gator gator"
-
 SYSTEMD_PACKAGES = "${PN}"
 SYSTEMD_SERVICE_${PN} = "streamline-gatord.service"
 SYSTEMD_AUTO_ENABLE = "disable"
+
