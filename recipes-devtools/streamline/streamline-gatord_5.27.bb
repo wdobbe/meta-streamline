@@ -4,7 +4,7 @@ LICENSE = "GPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
 RDEPENDS_${pn} = "streamline-gator-mod"
 
-inherit useradd systemd
+inherit systemd
 
 #Use tarball that is already included with gator kernel module recipe
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-kernel/streamline/streamline-gator-mod:"
