@@ -26,7 +26,7 @@ Patches
 
 Please submit any patches against the meta-streamline layer to 
 
-Maintainer: W. Dobbe <xxx.yyyyyy@zzzzz.com>
+Maintainer: W. Dobbe,  winfried <underscore> mb2 <at> xmsnet <dot> nl 
 
 
 Table of Contents
@@ -36,15 +36,15 @@ Table of Contents
  II. Misc
 
 
-I. Adding the meta-wt layer to your build
+I. Adding the meta-streamline layer to your build
 =================================================
 
 In order to use this layer, you need to make the build system aware of
 it.
 
-Assuming the meta-wt layer exists at the top-level of your
+Assuming the meta-streamline layer exists at the top-level of your
 yocto build tree, you can add it to the build system by adding the
-location of the meta-wt layer to bblayers.conf, along with any
+location of the meta-streamline layer to bblayers.conf, along with any
 other layers needed. e.g.:
 
   BBLAYERS ?= " \
