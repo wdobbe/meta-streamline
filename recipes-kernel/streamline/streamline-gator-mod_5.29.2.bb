@@ -7,6 +7,7 @@ inherit module
 SRC_URI = "file://streamline_gator_${PV}.tar.xz \
            file://gator_mod_makefile_for_yocto.patch \
 "
+           
 
 S = "${WORKDIR}/gator/driver"
 
@@ -20,7 +21,7 @@ do_compile_prepend() {
     GATOR_SRC_FILES_MD5=$(echo ${GATOR_SRC_FILES} | xargs cat | md5sum | cut -b 1-32 )
     #echo "GATOR_SRC_FILES: ${GATOR_SRC_FILES}"
     #echo "GATOR_SRC_FILES_MD5: ${GATOR_SRC_FILES_MD5}"
-    echo "static char *gator_src_md5 = \"${GATOR_SRC_FILES_MD5}\";" > ${S}/gator_src_md5.h
+    echo "static char *gator_src_md5 = \"${GATOR_SRC_FILES_MD5}\";" > ${S}/generated_gator_src_md5.h
 }
 
 

@@ -1,11 +1,11 @@
---- a/common.mk	2017-06-09 18:24:46.689935127 +0200
-+++ b/common.mk	2017-06-09 18:58:03.047372063 +0200
+--- a/common.mk	2019-06-25 18:11:22.694191576 +0200
++++ b/common.mk	2019-06-25 18:12:55.778191379 +0200
 @@ -6,7 +6,7 @@
  # -std=c++0x is the planned new c++ standard
  # -std=c++98 is the 1998 c++ standard
  CPPFLAGS += -O3 -Wall -fno-exceptions -pthread -MD -DETCDIR=\"/etc\" -Ilibsensors -I.
--CXXFLAGS += -std=c++11 -static-libstdc++ -fno-rtti -Wextra -Wshadow -Wpointer-arith -Wundef # -Weffc++ -Wmissing-declarations
-+CXXFLAGS += -std=c++11 -fno-rtti -Wextra -Wshadow -Wpointer-arith -Wundef # -Weffc++ -Wmissing-declarations
+-CXXFLAGS += -std=c++11 -static-libstdc++ -fno-rtti -Wextra -Wno-shadow -Wpointer-arith -Wundef # -Weffc++ -Wmissing-declarations
++CXXFLAGS += -std=c++11 -fno-rtti -Wextra -Wno-shadow -Wpointer-arith -Wundef # -Weffc++ -Wmissing-declarations
  ifeq ($(WERROR),1)
  	CPPFLAGS += -Werror
  endif
@@ -13,8 +13,8 @@
  endif
  
  # -s strips the binary of debug info
--LDFLAGS += -s
-+LDFLAGS += 
- LDLIBS += -lrt -lm -pthread
- TARGET = gatord
- ESCAPE_EXE = escape/escape
+-LDFLAGS     += -s
++LDFLAGS     += 
+ LDLIBS      += -lrt -lm -pthread
+ TARGET      := gatord
+ ESCAPE_EXE  := escape/escape

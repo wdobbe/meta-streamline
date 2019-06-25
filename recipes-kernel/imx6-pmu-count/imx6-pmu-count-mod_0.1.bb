@@ -5,7 +5,6 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/GPL-2.0;md5=80
 
 inherit module
 
-PV = "0.1"
 
 SRC_URI = "file://Makefile \
            file://imx6-pmu-count.c \
@@ -16,7 +15,6 @@ SRC_URI = "file://Makefile \
 S = "${WORKDIR}"
           
 
-          
 
 
 # The inherit of module.bbclass will automatically name module packages with
