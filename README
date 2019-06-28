@@ -1,7 +1,4 @@
-This README file contains information on the contents of the
-meta-streamline layer.
-
-Please see the corresponding sections below for details.
+Build ARM Streamline target software, with added support for NXP i.MX6 SOC.
 
 
 Dependencies
@@ -14,10 +11,10 @@ This layer depends on:
 
   URI: git://git.openembedded.org/openembedded-core
   layers: meta
-  branch: krogoth
+  branch: sumo
 
   URI: git://git.yoctoproject.org/poky
-  branch: krogoth
+  branch: sumo
   
 
 
@@ -29,11 +26,6 @@ Please submit any patches against the meta-streamline layer to
 Maintainer: W. Dobbe,  winfried <underscore> mb2 <at> xmsnet <dot> nl 
 
 
-Table of Contents
-=================
-
-  I. Adding the meta-streamline layer to your build
- II. Misc
 
 
 I. Adding the meta-streamline layer to your build
@@ -54,19 +46,44 @@ other layers needed. e.g.:
     /path/to/yocto/meta-streamline \
     "
 
+Then add the following recipes to IMAGE_INSTALL in your image file:
+* kernel-module-imx6-pmu-count
+* kernel-module-gator
+* streamline-gatord
 
-II. Misc
+II. Starting and stopping the Streamline gator daemon
+=====================================================
+To load the required kernel modules and start the gatord daemon run command:
+`systemctl start streamline-gatord.service`
+
+To stop the gatord daemon and unload the related kernel modules run command:
+`systemctl stop streamline-gatord.service`
+
+III. Misc
 ========
 This layer contains recipes for the ARM DS-5 streamline gator kernel module and daemon.
-The included source is from DS-5 5.27.
+It builds version 6.7.1 of the gator kernel module and daemon, as included with Arm DS-5 version 5.29.2 (the last DS-5 version ?).
 
 The makefile for the (optional) gator kernel module had to be changed to let it build with Yocto.
 To remove complexity in the makefile I have moved the generation of the include file gator_src_md5.h
 (that contains a md5sum of all concatenated source files) to the bitbake recipe.
 
+Tested with Yocto Krogoth and Sumo branch and Congatec QMX6 (NXP i.MX6quad SOM).
+
+Note that Arm discontinued DS-5 and released its replacement 'Arm Development Studio'. Arm Development Studio contains a newer
+version of Streamline. However the license price and conditions changed to the worse so my company decided to not upgrade to
+Arm Development Studio at the moment. This means I cannot test the newer Streamline versions and this layer will stay at
+gator 6.7.1.
+
+IV. i.MX6 support and limitations
+==================================
+
 The performance counters of the NXP i.MX6 SOC are turned off by default. I included a kernel module
 that will turn on these counters when the module is loaded, and will turn the counters off when
-the module is unloaded. This module should only be used with NXP i.MX6 SOCs.
+the module is unloaded. This module should only be used with NXP i.MX6 SOCs. If your target has a different SOC, remove
+the 'modprobe imx6-pmu-count' command from file streamline-gatord.service.
 
-Tested with Yocto krogoth branch and Congatec QMX6 (NXP i.MX6 SOM).
-
+Unfortunately Freescale decided to connect the IRQ lines of the 4 Cortex A9 PMUs together. The result is that the performance
+counters may be inaccurate when running all cores, and you may get a kernel oops due to superfluous interrupts.
+To avoid this boot your target with nr_cpus=1 or shutdown cores 2, 3 and 4 with command:
+echo 0 > /sys/devices/system/cpu/cpu3/online   (repeat for cpu2 and cpu1)

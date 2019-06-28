@@ -1,0 +1,11 @@
+--- a/gator_main.c	2019-06-28 13:27:47.860289065 +0200
++++ b/gator_main.c	2018-07-19 23:18:53.000000000 +0200
+@@ -8,7 +8,7 @@
+  */
+ 
+ /* This version must match the gator daemon version */
+-#define PROTOCOL_VERSION    670
++#define PROTOCOL_VERSION    671
+ static unsigned long gator_protocol_version = PROTOCOL_VERSION;
+ 
+ #include <linux/version.h>

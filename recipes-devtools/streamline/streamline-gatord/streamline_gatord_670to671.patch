@@ -1,0 +1,110 @@
+diff -U 3 -H -d -r -N -- a/Child.cpp b/Child.cpp
+--- a/Child.cpp	2019-06-28 14:19:18.418745320 +0200
++++ b/Child.cpp	2019-06-28 14:19:36.678787354 +0200
+@@ -490,9 +490,13 @@
+     }
+ 
+     // Safety net in case endSession does not complete within 5 seconds
+-    // Note this is unlikely to ever fire because main sends another signal
+-    // after 1 second
+-    alarm(5);
++    // Note this is unlikely to ever fire for a local capture
++    // because main sends another signal after 1 second.
++    // We use a separate thread here rather than ::alarm because other uses
++    // of sleep interfere with SIGALARM
++    std::thread { []() {::sleep(5); Child::signalHandler(SIGALRM);} }.detach();
++
++    terminateCommand();
+ 
+     gSessionData.mSessionIsActive = false;
+     if (primarySource != nullptr) {
+diff -U 3 -H -d -r -N -- a/Command.cpp b/Command.cpp
+--- a/Command.cpp	2019-06-28 14:19:18.418745320 +0200
++++ b/Command.cpp	2019-06-28 14:19:36.690787381 +0200
+@@ -228,7 +228,7 @@
+                     ssize_t bytesRead = 0;
+                     while (true)
+                     {
+-                        const ssize_t bytes = read(pipefd[0], buf + bytesRead, sizeof(buf - bytesRead));
++                        const ssize_t bytes = read(pipefd[0], buf + bytesRead, sizeof(buf) - bytesRead);
+                         if (bytes > 0)
+                         {
+                             bytesRead += bytes;
+diff -U 3 -H -d -r -N -- a/KMod.cpp b/KMod.cpp
+--- a/KMod.cpp	2019-06-28 14:19:18.422745330 +0200
++++ b/KMod.cpp	2019-06-28 14:19:36.690787381 +0200
+@@ -37,15 +37,15 @@
+         return false;
+     }
+ 
+-    char text[128];
++    char text[512];
+     snprintf(text, sizeof(text), "/dev/gator/events/%s", counter.getType());
+     return access(text, F_OK) == 0;
+ }
+ 
+ void KMod::resetCounters()
+ {
+-    char base[128];
+-    char text[128];
++    char base[384];
++    char text[512];
+ 
+     // Initialize all perf counters in the driver, i.e. set enabled to zero
+     struct dirent *ent;
+@@ -67,8 +67,8 @@
+ 
+ void KMod::setupCounter(Counter &counter)
+ {
+-    char base[128];
+-    char text[128];
++    char base[384];
++    char text[512];
+     snprintf(base, sizeof(base), "/dev/gator/events/%s", counter.getType());
+ 
+     if (isMaliCounter(counter)) {
+diff -U 3 -H -d -r -N -- a/SessionData.h b/SessionData.h
+--- a/SessionData.h	2019-06-28 14:19:18.422745330 +0200
++++ b/SessionData.h	2019-06-28 14:19:36.690787381 +0200
+@@ -33,7 +33,7 @@
+ #include "TtraceDriver.h"
+ #include "mali_userspace/MaliHwCntrDriver.h"
+ 
+-#define PROTOCOL_VERSION 670
++#define PROTOCOL_VERSION 671
+ // Differentiates development versions (timestamp) from release versions
+ #define PROTOCOL_DEV 10000000
+ 
+diff -U 3 -H -d -r -N -- a/lib/SharedMemory.h b/lib/SharedMemory.h
+--- a/lib/SharedMemory.h	2019-06-28 14:19:18.414745311 +0200
++++ b/lib/SharedMemory.h	2019-06-28 14:19:36.678787354 +0200
+@@ -59,7 +59,7 @@
+         new (allocation) T(std::forward<Args>(args)...);
+ 
+         const std::function<void(T*)> initialized_deleter = [](T *p) {
+-            ::operator delete(p);
++            p->~T();
+             deallocate<T>(p, 1);
+         };
+ 
+diff -U 3 -H -d -r -N -- a/linux/perf/PerfBuffer.cpp b/linux/perf/PerfBuffer.cpp
+--- a/linux/perf/PerfBuffer.cpp	2019-06-28 14:19:18.430745348 +0200
++++ b/linux/perf/PerfBuffer.cpp	2019-06-28 14:19:36.678787354 +0200
+@@ -38,7 +38,7 @@
+ PerfBuffer::~PerfBuffer()
+ {
+     for (auto cpuAndBuf : mBuffers) {
+-        munmap(cpuAndBuf.second.buffer, gSessionData.mPageSize + calculateMMapLength() - 1);
++        munmap(cpuAndBuf.second.buffer, calculateMMapLength());
+     }
+ }
+ 
+@@ -243,7 +243,7 @@
+ 
+         auto discard = mDiscard.find(cpu);
+         if (discard != mDiscard.end()) {
+-            munmap(buf, gSessionData.mPageSize + calculateMMapLength() - 1);
++            munmap(buf, calculateMMapLength());
+             mDiscard.erase(discard);
+             logg.logMessage("Unmapped cpu %i", cpu);
+             cpuAndBufIt = mBuffers.erase(cpuAndBufIt);

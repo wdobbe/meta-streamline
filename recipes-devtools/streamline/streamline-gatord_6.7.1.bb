@@ -1,7 +1,11 @@
 DESCRIPTION = "ARM DS-5 Streamline gator daemon, needed to use Streamline profiler"
 AUTHOR = "ARM Ltd."
 LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263"
+LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
+                    file://libsensors/COPYING.LGPL;md5=4fbd65380cdd255951079008b364516c \
+                    file://mxml/COPYING;md5=a6ba38606d63bb042c5d8cfee182e120 \
+"
+                    
 RDEPENDS_${pn} = "streamline-gator-mod"
 
 inherit systemd
@@ -9,12 +13,14 @@ inherit systemd
 #Use tarball that is already included with gator kernel module recipe
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-kernel/streamline/streamline-gator-mod:"
 
-SRC_URI = "file://streamline_gator_${PV}.tar.xz \
+SRC_URI = "git://github.com/ARM-software/gator.git;protocol=https \
            file://${PN}.service \
+           file://streamline_gatord_670to671.patch \
            file://gatord-yocto-build.patch \
 "
+SRCREV = "6.7"
 
-S = "${WORKDIR}/gator/daemon"
+S = "${WORKDIR}/git/daemon"
 
 
     
