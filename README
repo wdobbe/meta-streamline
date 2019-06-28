@@ -56,6 +56,9 @@ II. Starting and stopping the Streamline gator daemon
 To load the required kernel modules and start the gatord daemon run command:
 `systemctl start streamline-gatord.service`
 
+The port that is used for communication with the streamline GUI can be changed in file /etc/streamline-gator.conf .
+The default is set to port 4880 because port 8080 was already in use on our targets.
+
 To stop the gatord daemon and unload the related kernel modules run command:
 `systemctl stop streamline-gatord.service`
 
@@ -80,8 +83,8 @@ IV. i.MX6 support and limitations
 
 The performance counters of the NXP i.MX6 SOC are turned off by default. I included a kernel module
 that will turn on these counters when the module is loaded, and will turn the counters off when
-the module is unloaded. This module should only be used with NXP i.MX6 SOCs. If your target has a different SOC, remove
-the 'modprobe imx6-pmu-count' command from file streamline-gatord.service.
+the module is unloaded. This module should only be used with NXP i.MX6 SOCs. If your target has a different SOC, edit file
+/etc/streamline-gator.conf and set parameter enable_imx6_counters to 'n'.
 
 Unfortunately Freescale decided to connect the IRQ lines of the 4 Cortex A9 PMUs together. The result is that the performance
 counters may be inaccurate when running all cores, and you may get a kernel oops due to superfluous interrupts.

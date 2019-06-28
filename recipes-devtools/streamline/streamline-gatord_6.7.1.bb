@@ -14,9 +14,10 @@ inherit systemd
 FILESEXTRAPATHS_prepend := "${THISDIR}/../../recipes-kernel/streamline/streamline-gator-mod:"
 
 SRC_URI = "git://github.com/ARM-software/gator.git;protocol=https \
-           file://${PN}.service \
            file://streamline_gatord_670to671.patch \
            file://gatord-yocto-build.patch \
+           file://streamline-gator.conf \
+           file://${PN}.service \
 "
 SRCREV = "6.7"
 
@@ -34,6 +35,8 @@ do_install () {
     install -m 0755 ${S}/gatord ${D}${sbindir}
     install -d ${D}${systemd_unitdir}/system
     install -m 0644 ${WORKDIR}/${PN}.service ${D}${systemd_unitdir}/system
+    install -d ${D}${sysconfdir}
+    install -m 0644 ${WORKDIR}/streamline-gator.conf ${D}${sysconfdir}
 }
 
 FILES_${PN} += "${sbindir} \
