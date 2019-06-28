@@ -8,8 +8,6 @@ inherit module
 
 SRC_URI = "file://Makefile \
            file://imx6-pmu-count.c \
-           file://v7_pmu.S \
-           file://v7_pmu.h \
           "
 
 S = "${WORKDIR}"

@@ -1,6 +1,6 @@
 obj-m := imx6-pmu-count.o
 
-imx6-pmu-count-objs = imx6-pmu-count.o v7_pmu.o
+
 
 SRC := $(shell pwd)
 
